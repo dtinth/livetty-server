@@ -1,0 +1,19 @@
+{
+  "name": "ttyheroku",
+  "version": "0.0.0",
+  "description": "broadcast your tty to the world!",
+  "main": "app.js",
+  "dependencies": {
+    "commander": "~1.1.1",
+    "headless-terminal": "~0.1.1",
+    "send": "*",
+    "ws": "~0.4.31",
+    "express": "~3.4.8",
+    "socket.io": "~0.9.16"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "license": "MIT"
+}

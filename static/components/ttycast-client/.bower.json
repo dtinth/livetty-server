@@ -1,0 +1,32 @@
+{
+  "name": "ttycast-client",
+  "homepage": "https://github.com/dtinth/ttycast-client",
+  "authors": [
+    "Thai Pangsakulyanont <org.yi.dttvb@gmail.com>"
+  ],
+  "description": "client-side code for ttycast",
+  "keywords": [
+    "ttycast",
+    "vt",
+    "tty",
+    "terminal"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "_release": "5a155efa76",
+  "_resolution": {
+    "type": "branch",
+    "branch": "master",
+    "commit": "5a155efa7673c9c962de44fb6492cdda8fee2f4c"
+  },
+  "_source": "/Users/dttvb/Projects/ttycast-client",
+  "_target": "master",
+  "_originalSource": "../ttycast-client/",
+  "_direct": true
+}

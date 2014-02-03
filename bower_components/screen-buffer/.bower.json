@@ -1,0 +1,17 @@
+{
+  "name": "screen-buffer",
+  "version": "0.1.2",
+  "main": [
+    "./screen-buffer.js"
+  ],
+  "homepage": "https://github.com/dtinth/screen-buffer",
+  "_release": "0.1.2",
+  "_resolution": {
+    "type": "version",
+    "tag": "v0.1.2",
+    "commit": "aff529b9a11f319fc45518cc21de0baf2b16b56d"
+  },
+  "_source": "git://github.com/dtinth/screen-buffer.git",
+  "_target": "~0.1.2",
+  "_originalSource": "dtinth/screen-buffer"
+}
