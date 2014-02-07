@@ -8,7 +8,9 @@ window.onload = function() {
   var socket = io.connect()
   var room = location.pathname.substr(1)
 
-  socket.emit('message', { command: 'join', room: room })
+  socket.on('connect', function() {
+    socket.emit('message', { command: 'join', room: room })
+  })
 
   socket.on('patch', function(operations) {
     ScreenBuffer.patch(buf, operations)
