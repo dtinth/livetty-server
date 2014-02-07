@@ -1,19 +1,20 @@
 {
-  "name": "ttyheroku",
+  "name": "livetty-server",
   "version": "0.0.0",
   "description": "broadcast your tty to the world!",
   "main": "app.js",
   "dependencies": {
     "commander": "~1.1.1",
-    "headless-terminal": "~0.1.1",
     "send": "*",
-    "ws": "~0.4.31",
     "express": "~3.4.8",
-    "socket.io": "~0.9.16"
+    "socket.io": "~0.9.16",
+    "screen-buffer": "~0.3.3"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "mocha": "~1.17.1"
+  },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha"
   },
   "license": "MIT"
 }

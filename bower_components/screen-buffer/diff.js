@@ -1,6 +1,33 @@
 
 void function() {
 
+  // ## ScreenBuffer Diff and Patch
+  //
+  // Sometimes, you may want to stream the content of a screen buffer
+  // over the network.
+  //
+  // You can use `ScreenBuffer.diff` and `ScreenBuffer.patch` for this.
+  //
+  // Suppose that you have two ScreenBuffer objects, `a` and `b`,
+  //
+  // ```javascript
+  // var operations = ScreenBuffer.diff(b, a)
+  // ```
+  //
+  // This will compute the operations that needs to be done on `b`
+  // to make its contents equal to `a`.
+  // The returned result is an array of operations,
+  // which can be sent over the wire to another user.
+  //
+  // At the other side,
+  // when they received the operations,
+  // they can apply it to their own buffer like this:
+  //
+  // ```javascript
+  // ScreenBuffer.patch(b, operations)
+  // ```
+  //
+  //
   // ### ScreenBuffer.diff(source, destination)
   //
   // Computes the list of operation _to be applied on the source_
@@ -28,7 +55,6 @@ void function() {
   function diff(source, target) {
 
     var operations = [ ]
-    var output = { o: operations }
     var rows = target.getRows()
 
     /* resize rows */
@@ -54,11 +80,26 @@ void function() {
 
       /* search nearby rows that are most similar */
       var candidate = null
-      for (var k = Math.max(i - 4, 0); k < source.getRows() && k <= i + 4; k ++) {
+
+      /* get the rows that we can try */
+      var toTry = [i, i - 1, i + 1, i - 2, i + 2, i - 3, i + 3]
+            .filter(function(k) { return 0 <= k && k < source.getRows() })
+
+      /* for each possible rows to try, compute the difference between rows */
+      for (var j = 0; j < toTry.length; j ++) {
+
+        var k = toTry[j]
+
         var challenger = getDifferences(i, k, cols)
         if (candidate == null || challenger.changes < candidate.changes) {
           candidate = challenger
         }
+
+        /* stop if found a perfect match */
+        if (candidate.changes === 0) {
+          break
+        }
+
       }
 
       /* if we can't find any similar row, take itself! */

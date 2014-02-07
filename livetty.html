@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <meta charset=utf-8>
-<title>ttycast</title>
-<link rel=stylesheet href=components/ttycast-client/ttycast.css>
+<title>livetty</title>
+<link rel=stylesheet href=bower_components/ttycast-client/ttycast.css>
 <style>
 body {
   background: #000;
@@ -16,15 +16,16 @@ body {
   margin: 10px;
 }
 </style>
-<script src=components/ttycast-client/colors.js></script>
+<script src=bower_components/ttycast-client/colors.js></script>
 <body>
 
 <div class="terminal-container">
   <div class="terminal" id="terminal"></div>
 </div>
 <script src="/socket.io/socket.io.js"></script>
-<script src="components/screen-buffer/screen-buffer.js"></script>
-<script src="components/ttycast-client/display-buffer.js"></script>
-<script src="ttycast.js"></script>
+<script src="bower_components/screen-buffer/screen-buffer.js"></script>
+<script src="bower_components/screen-buffer/patch.js"></script>
+<script src="bower_components/ttycast-client/display-buffer.js"></script>
+<script src="livetty.js"></script>
 </body>
 

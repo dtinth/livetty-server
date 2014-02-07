@@ -1,72 +1,29 @@
 #!/usr/bin/env node
 
-// create the server and require other libraries
+/* create the server and require other libraries */
 var express = require('express')
   , app = express()
   , server = require('http').createServer(app)
   , path = require('path')
   , send = require('send')
-  , HeadlessTerminal = require('headless-terminal')
-  , ScreenBuffer = HeadlessTerminal.ScreenBuffer
-  , EventEmitter = require('events').EventEmitter
 
 
-// create socket.io server
+/* create socket.io server */
 var io = require('socket.io').listen(server)
 io.set('log level', 1)
 
 
-// serve static files
+/* serve static files */
 app.use(express.static(__dirname + '/static'))
+app.use('/bower_components', express.static(__dirname + '/bower_components'))
 
 
-function sendTo(key, event, value) {
-  //console.log('== want to broadcast', event, key)
-  if (listeners[key]) {
-    var obj = listeners[key]
-    for (var id in obj) {
-      if (obj[id] && obj[id].emit) {
-        obj[id].emit(event, value)
-        //console.log('emit to', id)
-      }
-    }
-  }
-}
 
-var listeners = { }
+var Room = require('./lib/room')
+var RoomManager = require('./lib/room_manager')
 
-function Room(key) {
-  var room = new EventEmitter()
-  room.buffer = new ScreenBuffer()
-  room.destroy = function() {
-    sendTo(key, 'destroyed', 'Room has been destroyed')
-  }
-  room.send = function(data) {
-    var allowed = ['setCursor', 'setRows', 'draw', 'copy', 'setCols']
-    var operations = []
-    try {
-      for (var i = 0; i < data.length; i ++) {
-        var name = data[i][0]
-        if (allowed.indexOf(name) > -1) {
-          room.buffer[name].apply(room.buffer, data[i].slice(1))
-          operations.push(data[i])
-        }
-      }
-      sendTo(key, 'data', operations)
-    } catch (e) {
-    }
-  }
-  sendTo(key, 'created', 'Room has been created')
-  return room
-}
+var manager = new RoomManager(Room)
 
-
-// the display as seen by clients
-var buffer = new ScreenBuffer()
-  , patcher = HeadlessTerminal.patcher
-
-
-var rooms = { }
 
 // when a client is connected, it is initialized with an empty buffer.
 // we patch its buffer to our current state
@@ -76,62 +33,62 @@ io.sockets.on('connection', function(socket) {
   var state = main
   var id = ++nid
 
-  socket.on('c', function(msg) {
-    // console.log(id, msg)
+  socket.on('message', function(msg) {
     if (msg && typeof msg == 'object') state(msg)
   })
 
   function main(msg) {
     if (msg.command == 'broadcast') {
-      var key = ':' + msg.params
-      if (rooms[key]) {
-        socket.emit('c', { error: 'Room already exists!' })
-      } else {
-        socket.emit('c', { ok: 'Room created!' })
-        state = room(key)
+      try {
+        var room = manager.create(msg.room)
+        socket.emit('room_created', { name: room.name })
+        state = roomState(room)
+      } catch (e) {
+        socket.emit('room_exists')
       }
     } else if (msg.command == 'join') {
-      var key = ':' + msg.params
-      socket.emit('c', { ok: 'Room joined!' })
-      state = join(key)
+      state = subscribe(msg.room)
     }
   }
 
-  function join(key) {
-    var obj = listeners[key] || (listeners[key] = { })
-    obj[id] = socket
-    if (rooms[key]) {
-      socket.emit('data', patcher.patch(new ScreenBuffer(), rooms[key].buffer))
-    }
+  function roomState(room) {
     socket.on('disconnect', function() {
-      delete obj[id]
+      room.destroy()
+    })
+    return function(msg) {
+      if (msg.command == 'patch') {
+        room.send(msg.operations)
+      }
+    }
+  }
+
+  function subscribe(room) {
+    manager.subscribe(room, subscriber)
+    socket.on('disconnect', function() {
+      manager.unsubscribe(room, subscriber)
     })
     return function() {
     }
-  }
-
-  function room(key) {
-    rooms[key] = new Room(key)
-    socket.on('disconnect', function() {
-      rooms[key].destroy()
-      delete rooms[key]
-    })
-    return function(msg) {
-      if (msg.command == 'data') {
-        rooms[key].send(msg.params)
+    function subscriber(event) {
+      if (event.type == 'patch') {
+        socket.emit('patch', event.operations)
+      } else {
+        socket.emit(event.type)
       }
     }
   }
 
 })
 
+
 var fs = require('fs')
-var buf = fs.readFileSync(__dirname + '/ttycast.html')
+var buf = fs.readFileSync(__dirname + '/livetty.html')
 
 app.get('/:room', function(req, res, next) {
   res.set('Content-Type', 'text/html')
   res.send(buf)
 })
+
 
 // listen
 server.listen(Number(process.env.PORT) || 13377, function() {

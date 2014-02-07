@@ -3,7 +3,7 @@ void function() {
 
   // ### ScreenBuffer.patch(screenbuffer, operations)
   //
-  // Applies the operations from the array onto the screenbuffer.
+  // Applies the operations from the diff array onto the screenbuffer.
   //
   function patch(screenbuffer, operations) {
 
@@ -17,7 +17,7 @@ void function() {
       } else if (op.length == 3) {
         if (op[1] == 1) { /* copy */
           screenbuffer.update(op[0], backbuffer.getRow(op[2]))
-        } else if (op[0] === 0) { /* resize */
+        } else if (op[1] === 0) { /* resize */
           screenbuffer.setCols(op[0], op[2])
         }
       } else if (op.length == 4) {
