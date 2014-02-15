@@ -13,6 +13,6 @@
     "tests"
   ],
   "dependencies": {
-    "ttycast-client": "dtinth/ttycast-client#~0.2.1"
+    "ttycast-client": "dtinth/ttycast-client#~0.4.0"
   }
 }

@@ -1,10 +1,28 @@
-ScreenBuffer
+ScreenBuffer [![ok, travis](https://travis-ci.org/dtinth/screen-buffer.png?branch=master)](https://travis-ci.org/dtinth/screen-buffer)
 ============
+
 A ScreenBuffer represents a visible portion of a terminal in a screen.
 A ScreenBuffer contains a lot of cells.
 Each cell contains a character and attributes,
 such as color and boldness.
 It also keeps track of cursor position.
+
+
+## Usage in Node.js
+
+```javascript
+var ScreenBuffer = require('screen-buffer')
+```
+
+
+## Usage in Browser
+
+```html
+<script src="path/to/screen-buffer.js"></script>
+<script src="path/to/diff.js"></script><!-- if you need .diff -->
+<script src="path/to/patch.js"></script><!-- if you need .patch -->
+```
+
 
 ## Cell Attributes
 
@@ -22,6 +40,22 @@ There are two special values for colors:
  * 256 - default background color
  
 ## API
+
+### ScreenBuffer.EMPTY_CELL
+
+An empty cell: default background and foreground with space character.
+
+### ondirty : function(row) { }
+
+Override this function to be notified when changes are made to the buffer.
+
+### cursorX : Number
+
+The X position of the cursor (0 = leftmost)
+
+### cursorY : Number
+
+The Y position of the cursor (0 = topmost)
 
 ### update(y, [ [attr, char], [attr, char], ... ]) 
 

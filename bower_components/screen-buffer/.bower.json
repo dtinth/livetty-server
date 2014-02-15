@@ -1,7 +1,7 @@
 {
   "name": "screen-buffer",
   "main": "./screen-buffer.js",
-  "version": "0.3.2",
+  "version": "0.4.0",
   "homepage": "https://github.com/dtinth/screen-buffer",
   "authors": [
     "Thai Pangsakulyanont <org.yi.dttvb@gmail.com>"
@@ -21,13 +21,13 @@
     "test",
     "tests"
   ],
-  "_release": "0.3.2",
+  "_release": "0.4.0",
   "_resolution": {
     "type": "version",
-    "tag": "v0.3.2",
-    "commit": "c26b6ea168766bc7c2e1edf05267d27d5b6deff8"
+    "tag": "v0.4.0",
+    "commit": "51f39a8bf0a245b71e0e9fbf379be7e17e58a116"
   },
   "_source": "git://github.com/dtinth/screen-buffer.git",
-  "_target": "~0.3.2",
+  "_target": "~0.4.0",
   "_originalSource": "dtinth/screen-buffer"
 }

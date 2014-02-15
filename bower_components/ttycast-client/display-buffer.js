@@ -15,24 +15,7 @@ function DisplayBuffer(el) {
     , timeout = null
     , rows = []
 
-  // override : when draw, mark the buffer dirty
-  buf.update = function(row) {
-    setDirty(row)
-    return update.apply(this, arguments)
-  }
-
-  // override : when copy, mark the buffer dirty
-  buf.setCell = function(row) {
-    setDirty(row)
-    return setCell.apply(this, arguments)
-  }
-
-  // override : when moving cursor, mark the buffer dirty
-  buf.setCursor = function(x, y) {
-    setDirty(this.cursorY)
-    setDirty(y)
-    return setCursor.apply(this, arguments)
-  }
+  buf.ondirty = setDirty
 
   // mark a row as dirty, get ready to refresh
   function setDirty(row) {

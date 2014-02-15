@@ -54,11 +54,17 @@ io.sockets.on('connection', function(socket) {
   function roomState(room) {
     socket.on('disconnect', function() {
       room.destroy()
+      manager.removeListener('count:' + room.name, updateCount)
     })
+    updateCount(manager.count(room.name))
+    manager.on('count:' + room.name, updateCount)
     return function(msg) {
       if (msg.command == 'patch') {
         room.send(msg.operations)
       }
+    }
+    function updateCount(count) {
+      socket.emit('viewers', count)
     }
   }
 
@@ -67,6 +73,7 @@ io.sockets.on('connection', function(socket) {
     socket.on('disconnect', function() {
       manager.unsubscribe(room, subscriber)
     })
+    sendInitialPatch()
     return function() {
     }
     function subscriber(event) {
@@ -74,6 +81,12 @@ io.sockets.on('connection', function(socket) {
         socket.emit('patch', event.operations)
       } else {
         socket.emit(event.type)
+      }
+    }
+    function sendInitialPatch() {
+      var roomObject = manager.get(room)
+      if (roomObject) {
+        socket.emit('patch', roomObject.getInitialPatch())
       }
     }
   }
@@ -85,10 +98,17 @@ var fs = require('fs')
 var buf = fs.readFileSync(__dirname + '/livetty.html')
 
 app.get('/:room', function(req, res, next) {
-  res.set('Content-Type', 'text/html')
-  res.send(buf)
+  if (manager.get(req.param('room'))) {
+    res.set('Content-Type', 'text/html')
+    res.send(buf)
+  } else {
+    next()
+  }
 })
 
+app.use(function(req, res, next) {
+  res.send(404, '404 Not Found')
+})
 
 // listen
 server.listen(Number(process.env.PORT) || 13377, function() {

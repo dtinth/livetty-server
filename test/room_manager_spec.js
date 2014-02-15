@@ -67,6 +67,14 @@ describe('RoomManager', function() {
       }
     })
 
+    it('count should count number of subscribers', function() {
+      assert.equal(manager.count('lobby'), 0)
+      manager.subscribe('lobby', function() {})
+      assert.equal(manager.count('lobby'), 1)
+      manager.subscribe('lobby', function() {})
+      assert.equal(manager.count('lobby'), 2)
+    })
+
     it('should allow clients to subscribe and unsubscribe from a room', function() {
 
       manager.subscribe('lobby', subscriber)

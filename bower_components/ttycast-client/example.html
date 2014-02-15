@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<title>Example</title>
+<link rel="stylesheet" href="ttycast.css">
+<script src="colors.js"></script>
+<body>
+<div id="hello" class="terminal"></div>
+<script src="bower_components/screen-buffer/screen-buffer.js"></script>
+<script src="display-buffer.js"></script>
+<script>
+var buf = new DisplayBuffer(document.querySelector('#hello'))
+buf.update(1, [[(200 << 9) | 123, 'h'], [(123 << 9) | 200, 'a']])
+</script>
+
+

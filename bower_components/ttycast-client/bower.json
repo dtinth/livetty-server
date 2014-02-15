@@ -1,6 +1,6 @@
 {
   "name": "ttycast-client",
-  "version": "0.2.1",
+  "version": "0.4.0",
   "homepage": "https://github.com/dtinth/ttycast-client",
   "authors": [
     "Thai Pangsakulyanont <org.yi.dttvb@gmail.com>"
@@ -21,6 +21,6 @@
     "tests"
   ],
   "dependencies": {
-    "screen-buffer": "dtinth/screen-buffer#~0.3.2"
+    "screen-buffer": "dtinth/screen-buffer#~0.4.0"
   }
 }
