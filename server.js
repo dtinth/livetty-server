@@ -106,6 +106,10 @@ app.get('/:room', function(req, res, next) {
   }
 })
 
+app.get('/', function(req, res, next) {
+  res.redirect('https://github.com/dtinth/livetty-server')
+})
+
 app.use(function(req, res, next) {
   res.send(404, '404 Not Found')
 })
