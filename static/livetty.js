@@ -16,4 +16,9 @@ window.onload = function() {
     ScreenBuffer.patch(buf, operations)
   })
 
+  socket.on('options', function(options) {
+    document.getElementById('aux').innerHTML = options.aux || ''
+    document.getElementById('container').style.display = options.hide == 'yes' ? 'none' : ''
+  })
+
 }

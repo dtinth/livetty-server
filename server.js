@@ -15,6 +15,7 @@ io.set('log level', 1)
 
 /* serve static files */
 app.use(express.static(__dirname + '/static'))
+app.use(express.urlencoded())
 app.use('/bower_components', express.static(__dirname + '/bower_components'))
 
 
@@ -40,8 +41,8 @@ io.sockets.on('connection', function(socket) {
   function main(msg) {
     if (msg.command == 'broadcast') {
       try {
-        var room = manager.create(msg.room)
-        socket.emit('room_created', { name: room.name })
+        var room = manager.create(msg.room, msg.key)
+        socket.emit('room_created', { name: room.name, key: room.key })
         state = roomState(room)
       } catch (e) {
         socket.emit('room_exists')
@@ -54,41 +55,43 @@ io.sockets.on('connection', function(socket) {
   function roomState(room) {
     socket.on('disconnect', function() {
       room.destroy()
-      manager.removeListener('count:' + room.name, updateCount)
     })
-    updateCount(manager.count(room.name))
-    manager.on('count:' + room.name, updateCount)
     return function(msg) {
       if (msg.command == 'patch') {
         room.send(msg.operations)
       }
     }
-    function updateCount(count) {
-      socket.emit('viewers', count)
-    }
   }
 
   function subscribe(room) {
+
     manager.subscribe(room, subscriber)
     socket.on('disconnect', function() {
       manager.unsubscribe(room, subscriber)
     })
     sendInitialPatch()
+
     return function() {
     }
+
     function subscriber(event) {
       if (event.type == 'patch') {
         socket.emit('patch', event.operations)
+      } else if (event.type == 'options') {
+        socket.emit('options', event.options)
       } else {
         socket.emit(event.type)
       }
     }
+
     function sendInitialPatch() {
       var roomObject = manager.get(room)
       if (roomObject) {
         socket.emit('patch', roomObject.getInitialPatch())
+        socket.emit('options', roomObject.getViewerOptions())
       }
     }
+
   }
 
 })
@@ -97,14 +100,46 @@ io.sockets.on('connection', function(socket) {
 var fs = require('fs')
 var buf = fs.readFileSync(__dirname + '/livetty.html')
 
-app.get('/:room', function(req, res, next) {
-  if (manager.get(req.param('room'))) {
-    res.set('Content-Type', 'text/html')
-    res.send(buf)
-  } else {
-    next()
+function room(fn) {
+  return function(req, res, next) {
+    req.room = manager.get(req.param('room'))
+    if (req.room) {
+      fn(req, res, next)
+    } else {
+      next()
+    }
   }
-})
+}
+
+function checkKey(fn) {
+  return function(req, res, next) {
+    if (req.param('key') != req.room.key) {
+      res.send(401, 'Invalid key!')
+    } else {
+      fn(req, res, next)
+    }
+  }
+}
+
+app.get('/:room', room(function(req, res, next) {
+  res.set('Content-Type', 'text/html')
+  res.send(buf)
+}))
+
+app.get('/:room/info.json', room(function(req, res, next) {
+  res.json({ room: req.room.name, viewers: manager.count(req.room.name) })
+}))
+
+app.post('/:room/:key/options.json', room(checkKey(function(req, res, next) {
+  var options = req.room.getViewerOptions()
+  for (var i in req.body) {
+    if (Object.prototype.hasOwnProperty.call(req.body, i)) {
+      options[i] = req.body[i]
+    }
+  }
+  req.room.setViewerOptions(options)
+  res.json({ ok: true })
+})))
 
 app.get('/', function(req, res, next) {
   res.redirect('https://github.com/dtinth/livetty-server')

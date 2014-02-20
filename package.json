@@ -8,7 +8,8 @@
     "send": "*",
     "express": "~3.4.8",
     "socket.io": "~0.9.16",
-    "screen-buffer": "~0.4.0"
+    "screen-buffer": "~0.4.0",
+    "lru-cache": "~2.5.0"
   },
   "devDependencies": {
     "mocha": "~1.17.1"

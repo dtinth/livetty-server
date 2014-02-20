@@ -5,6 +5,8 @@
 <style>
 body {
   background: #000;
+  color: white;
+  font: 14px Verdana, sans-serif;
   text-align: center;
   font-size: 14px;
 }
@@ -15,13 +17,19 @@ body {
   padding: 4px;
   margin: 10px;
 }
+.aux {
+  margin-top: 20px;
+}
 </style>
 <script src=bower_components/ttycast-client/colors.js></script>
 <body>
 
-<div class="terminal-container">
+<div class="terminal-container" id="container">
   <div class="terminal" id="terminal"></div>
 </div>
+
+<div class="aux" id="aux"></div>
+
 <script src="/socket.io/socket.io.js"></script>
 <script src="bower_components/screen-buffer/screen-buffer.js"></script>
 <script src="bower_components/screen-buffer/patch.js"></script>
